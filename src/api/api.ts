@@ -12,11 +12,17 @@ export interface DeviceInformation {
     possessionDate?: string;
 }
 
-const { AUTH, DEVICES } = API_ROUTES;
+const { AUTH, DEVICES, CREATE_DEVICE, DEVICE } = API_ROUTES;
 
 const makeServiceCall = async (url: string, method: Method, data?: any) => {
     try {
-        const response = await axios({ method, url, data });
+        const accessToken = window.localStorage.getItem('ACCESS_TOKEN');
+        const response = await axios({
+            method,
+            url,
+            data,
+            headers: { Authorization: `Bearer ${accessToken}` },
+        });
 
         return response?.data;
     } catch (error) {}
@@ -43,4 +49,14 @@ export const addNewDevice = async ({
     name,
     possessionDate,
 }: DeviceInformation) =>
-    await makeServiceCall(DEVICES, 'POST', { name, possessionDate });
+    await makeServiceCall(CREATE_DEVICE, 'POST', { name, possessionDate });
+
+export const deleteDevice = async (id: string) => {
+    const endpoint = DEVICE.replace(':id', id);
+    return await makeServiceCall(endpoint, 'DELETE');
+};
+
+export const editDevice = async (id: string, name: string) => {
+    const endpoint = DEVICE.replace(':id', id);
+    return await makeServiceCall(endpoint, 'PATCH', { name });
+};

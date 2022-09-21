@@ -1,6 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { getAllDevices as getDevices, addNewDevice } from 'api/api';
+import {
+    getAllDevices as getDevices,
+    addNewDevice,
+    deleteDevice,
+    editDevice,
+} from 'api/api';
 
 import { DeviceFields, DeviceProps } from 'components/device-form';
 import AddDeviceModal from 'components/add-device-modal';
@@ -44,18 +49,24 @@ const Devices = (): JSX.Element => {
 
     const handleEditDeviceModalSubmit = useCallback(
         async ({ id, email, device }: DeviceProps) => {
-            // TODO: [celikm] implement edit device api
-            await getAllDevices();
-            clearDeviceToUpdate();
+            if (id) {
+                await editDevice(id, device);
+                await getAllDevices();
+                clearDeviceToUpdate();
+            }
         },
         [getAllDevices, clearDeviceToUpdate]
     );
 
     const handleDeleteDevice = useCallback(
         async ({ id, email, device }: DeviceProps) => {
-            // TODO: [celikm] implement delete device api
+            if (id) {
+                await deleteDevice(id);
+                await getAllDevices();
+                clearDeviceToUpdate();
+            }
         },
-        []
+        [deleteDevice]
     );
 
     useEffect(() => {

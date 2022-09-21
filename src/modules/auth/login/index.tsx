@@ -56,6 +56,10 @@ const Login = (): JSX.Element => {
         onSubmit: async ({ email, password }) => {
             try {
                 const signInResponse = await signIn({ email, password });
+                window.localStorage.setItem(
+                    'ACCESS_TOKEN',
+                    signInResponse.access_token
+                );
 
                 if (signInResponse) {
                     navigate(PATHS.DEVICES);
